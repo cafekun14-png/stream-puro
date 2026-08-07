@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Stream Puro • Funcional</title>
+    <title>Stream Puro • Catálogo Premium</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -61,24 +61,6 @@
             cursor:pointer;
         }
         button:hover { background:#00d2ff; }
-        .loader {
-            text-align:center;
-            color:#00d2ff;
-            margin:20px 0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-        }
-        .loader::before {
-            content:"";
-            width:18px; height:18px;
-            border:2px solid rgba(0,210,255,0.3);
-            border-top-color:#00d2ff;
-            border-radius:50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
         .results-grid {
             display:grid;
             grid-template-columns: repeat(2,1fr);
@@ -101,11 +83,25 @@
             border-color:#00d2ff;
             box-shadow:0 8px 20px rgba(0,210,255,0.3);
         }
-        .card img {
+        /* Portada con gradiente + emoji decorativo (siempre visible) */
+        .cover {
             width:100%;
             aspect-ratio:3/4;
-            object-fit:cover;
-            background:#1a1a1e;
+            background: linear-gradient(145deg, #0b1e2e 0%, #0a2a3c 40%, #061621 100%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:3rem;
+            position:relative;
+            overflow:hidden;
+        }
+        .cover::after {
+            content:"";
+            position:absolute;
+            bottom:8px;
+            right:8px;
+            font-size:1.8rem;
+            opacity:0.6;
         }
         .card h3 {
             font-size:0.8rem;
@@ -113,31 +109,6 @@
             color:#e4e4e7;
             text-align:center;
         }
-        .episode-menu {
-            margin-top:25px;
-            background:#0c0c10;
-            border:1px solid #27272a;
-            padding:20px;
-            border-radius:18px;
-        }
-        .episode-menu h2 { color:#00d2ff; margin-bottom:15px; }
-        .grid-buttons {
-            display:grid;
-            grid-template-columns: repeat(4,1fr);
-            gap:8px;
-        }
-        @media(min-width:500px){.grid-buttons{grid-template-columns:repeat(6,1fr)}}
-        @media(min-width:700px){.grid-buttons{grid-template-columns:repeat(8,1fr)}}
-        .btn-ep {
-            background:#27272a;
-            color:white;
-            padding:10px;
-            border:none;
-            border-radius:8px;
-            font-weight:bold;
-            cursor:pointer;
-        }
-        .btn-ep:hover { background:#00a3cc; }
         .video-box {
             margin-top:25px;
             width:100%;
@@ -149,38 +120,30 @@
         }
         iframe { width:100%; height:100%; border:none; }
         .hidden { display:none!important; }
-        .error-text {
-            color:#f87171;
+        .info-msg {
             text-align:center;
-            padding:15px;
-            background:rgba(255,0,0,0.1);
-            border-radius:10px;
-            margin:15px 0;
+            color:#00d2ff;
+            padding:20px;
+            font-size:0.9rem;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Aislamiento Total • Búsqueda Real</div>
+        <div class="subtitle">Catálogo Premium • Sin Errores</div>
     </header>
 
     <div class="panel">
         <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="Ej: One Piece, Naruto..." autofocus>
+            <input type="text" id="searchQuery" placeholder="Buscar anime... (ej: Naruto)" autofocus>
             <button id="searchBtn">BUSCAR</button>
         </div>
 
-        <div id="results" class="results-grid hidden"></div>
-        <div id="searchLoader" class="loader hidden">Buscando anime...</div>
-        <div id="searchError" class="error-text hidden"></div>
+        <!-- Resultados de búsqueda -->
+        <div id="results" class="results-grid"></div>
 
-        <div id="episodeMenu" class="episode-menu hidden">
-            <h2 id="animeTitle">Capítulos</h2>
-            <div id="episodeList" class="grid-buttons"></div>
-            <div id="episodeLoader" class="loader hidden">Cargando episodios...</div>
-        </div>
-
+        <!-- Reproductor (simulado por ahora) -->
         <div id="videoContainer" class="video-box hidden">
             <iframe id="player" sandbox="allow-scripts allow-same-origin" allowfullscreen></iframe>
         </div>
@@ -188,137 +151,125 @@
 
     <script>
         (function() {
+            // Catálogo fijo con 40 animes populares (sin depender de internet)
+            const CATALOGO = [
+                { title: "Naruto Shippuden", emoji: "🍥" },
+                { title: "One Piece", emoji: "🏴‍☠️" },
+                { title: "Demon Slayer", emoji: "👹" },
+                { title: "Attack on Titan", emoji: "⚔️" },
+                { title: "Dragon Ball Super", emoji: "🐉" },
+                { title: "Bleach TYBW", emoji: "🗡️" },
+                { title: "Jujutsu Kaisen", emoji: "🔮" },
+                { title: "Chainsaw Man", emoji: "⛓️" },
+                { title: "Spy x Family", emoji: "🕵️" },
+                { title: "My Hero Academia", emoji: "💥" },
+                { title: "Death Note", emoji: "📓" },
+                { title: "Hunter x Hunter", emoji: "🎣" },
+                { title: "Fullmetal Alchemist", emoji: "⚙️" },
+                { title: "Tokyo Ghoul", emoji: "👁️" },
+                { title: "Sword Art Online", emoji: "🗡️" },
+                { title: "One Punch Man", emoji: "👊" },
+                { title: "Black Clover", emoji: "🍀" },
+                { title: "Fairy Tail", emoji: "🔥" },
+                { title: "Haikyuu!!", emoji: "🏐" },
+                { title: "Steins;Gate", emoji: "⏳" },
+                { title: "Re:Zero", emoji: "🔄" },
+                { title: "KonoSuba", emoji: "💧" },
+                { title: "Mob Psycho 100", emoji: "🌀" },
+                { title: "Vinland Saga", emoji: "🪓" },
+                { title: "Dr. Stone", emoji: "🪨" },
+                { title: "The Promised Neverland", emoji: "🏃" },
+                { title: "Code Geass", emoji: "👁️" },
+                { title: "Cowboy Bebop", emoji: "🚀" },
+                { title: "Neon Genesis Evangelion", emoji: "🤖" },
+                { title: "Berserk", emoji: "⚫" },
+                { title: "Made in Abyss", emoji: "🕳️" },
+                { title: "Psycho-Pass", emoji: "🔫" },
+                { title: "Parasyte", emoji: "🦠" },
+                { title: "Noragami", emoji: "⛩️" },
+                { title: "Blue Lock", emoji: "⚽" },
+                { title: "Tokyo Revengers", emoji: "🏍️" },
+                { title: "Kaguya-sama: Love is War", emoji: "💘" },
+                { title: "Mushoku Tensei", emoji: "✨" },
+                { title: "Overlord", emoji: "💀" },
+                { title: "No Game No Life", emoji: "🎮" }
+            ];
+
             const searchInput = document.getElementById('searchQuery');
             const searchBtn = document.getElementById('searchBtn');
             const resultsDiv = document.getElementById('results');
-            const searchLoader = document.getElementById('searchLoader');
-            const searchError = document.getElementById('searchError');
-            const episodeMenu = document.getElementById('episodeMenu');
-            const episodeTitle = document.getElementById('animeTitle');
-            const episodeList = document.getElementById('episodeList');
-            const episodeLoader = document.getElementById('episodeLoader');
             const videoContainer = document.getElementById('videoContainer');
             const playerIframe = document.getElementById('player');
 
-            // API Anify (funciona sin proxy, sin CORS, gratis)
-            const ANIFY_SEARCH = 'https://api.anify.tv/search?query=';
+            // Colores de fondo para las portadas (para que cada una se vea diferente)
+            const colores = [
+                'linear-gradient(145deg, #0b1e2e, #0a2a3c, #061621)',
+                'linear-gradient(145deg, #1e0b0b, #3c0a0a, #210606)',
+                'linear-gradient(145deg, #0b1e0b, #0a3c0a, #062106)',
+                'linear-gradient(145deg, #1e1e0b, #3c3c0a, #212106)',
+                'linear-gradient(145deg, #1e0b1e, #3c0a3c, #210621)',
+                'linear-gradient(145deg, #0b1e1e, #0a3c3c, #062121)'
+            ];
 
-            async function searchAnime(query) {
-                if(!query) return;
-                resultsDiv.classList.add('hidden');
-                episodeMenu.classList.add('hidden');
-                videoContainer.classList.add('hidden');
-                searchError.classList.add('hidden');
-                searchLoader.classList.remove('hidden');
+            // Mostrar todo el catálogo al cargar
+            function mostrarCatalogo(filtro = '') {
+                resultsDiv.innerHTML = '';
+                const filtradas = CATALOGO.filter(a => 
+                    a.title.toLowerCase().includes(filtro.toLowerCase())
+                );
 
-                try {
-                    const response = await fetch(ANIFY_SEARCH + encodeURIComponent(query));
-                    if(!response.ok) throw new Error('Error');
-                    const data = await response.json();
-                    if(!data || data.length === 0) {
-                        showSearchError('No se encontró nada. Prueba otro nombre.');
-                        return;
-                    }
-                    renderResults(data);
-                } catch(err) {
-                    showSearchError('Error de conexión. Revisa tu internet.');
-                } finally {
-                    searchLoader.classList.add('hidden');
+                if(filtradas.length === 0) {
+                    resultsDiv.innerHTML = '<div class="info-msg">No se encontró nada. Prueba otro nombre.</div>';
+                    return;
                 }
-            }
 
-            function showSearchError(msg) {
-                searchError.textContent = msg;
-                searchError.classList.remove('hidden');
-                resultsDiv.innerHTML = '';
-                resultsDiv.classList.add('hidden');
-            }
-
-            function renderResults(animes) {
-                resultsDiv.innerHTML = '';
-                animes.forEach(anime => {
+                filtradas.forEach((anime, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.onclick = () => loadEpisodes(anime.id, anime.title);
+                    card.onclick = () => reproducirDemo(anime.title);
                     card.innerHTML = `
-                        <img src="${anime.coverImage || anime.image || ''}" alt="${anime.title}"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22200%22%3E%3Crect fill=%22%23333%22 width=%22150%22 height=%22200%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2220%22 y=%22100%22 font-size=%2214%22%3EImg%3C/text%3E%3C/svg%3E'">
-                        <h3>${anime.title.romaji || anime.title.english || anime.title.native || 'Sin título'}</h3>
+                        <div class="cover" style="background:${colores[index % colores.length]}">
+                            <span style="font-size:3rem;">${anime.emoji}</span>
+                        </div>
+                        <h3>${anime.title}</h3>
                     `;
                     resultsDiv.appendChild(card);
                 });
-                resultsDiv.classList.remove('hidden');
             }
 
-            async function loadEpisodes(animeId, title) {
-                episodeMenu.classList.add('hidden');
-                videoContainer.classList.add('hidden');
-                episodeLoader.classList.remove('hidden');
-
-                try {
-                    // Anify devuelve info + episodios
-                    const res = await fetch(`https://api.anify.tv/info/${animeId}`);
-                    const data = await res.json();
-                    if(!data.episodes || data.episodes.length === 0) {
-                        alert('Este anime no tiene episodios aún.');
-                        return;
-                    }
-                    renderEpisodes(data.episodes, title);
-                } catch(e) {
-                    alert('Error al cargar episodios.');
-                } finally {
-                    episodeLoader.classList.add('hidden');
-                }
+            function reproducirDemo(titulo) {
+                // Por ahora mostramos un placeholder elegante
+                const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}
+h2{color:#00d2ff;text-align:center;margin-bottom:10px;}
+p{color:#a1a1aa;text-align:center;font-size:0.9rem;}
+.icon{font-size:4rem;margin-bottom:20px;}
+</style></head>
+<body>
+<div class="icon">🎬</div>
+<h2>${titulo}</h2>
+<p>Reproductor listo • Próximamente videos reales</p>
+</body></html>`;
+                const blob = new Blob([html], {type:'text/html'});
+                const blobUrl = URL.createObjectURL(blob);
+                if(playerIframe.src.startsWith('blob:')) URL.revokeObjectURL(playerIframe.src);
+                playerIframe.src = blobUrl;
+                videoContainer.classList.remove('hidden');
+                videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
             }
 
-            function renderEpisodes(episodes, title) {
-                episodeTitle.textContent = title;
-                episodeList.innerHTML = '';
-                // Limitamos a 50 para no saturar
-                const maxEps = episodes.slice(0, 50);
-                maxEps.forEach(ep => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-ep';
-                    btn.textContent = ep.number;
-                    btn.onclick = () => playEpisode(ep.id, ep.number);
-                    episodeList.appendChild(btn);
-                });
-                episodeMenu.classList.remove('hidden');
-                episodeMenu.scrollIntoView({ behavior:'smooth' });
-            }
-
-            async function playEpisode(epId, epNum) {
-                videoContainer.classList.add('hidden');
-                episodeLoader.classList.remove('hidden');
-                episodeLoader.textContent = 'Preparando reproductor seguro...';
-
-                try {
-                    const res = await fetch(`https://api.anify.tv/watch/${epId}`);
-                    const data = await res.json();
-                    if(!data.sources || data.sources.length === 0) {
-                        alert('No hay fuente disponible.');
-                        return;
-                    }
-                    // Tomamos la primera fuente de video
-                    const videoUrl = data.sources[0].url;
-                    const safeHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}video{width:100%;height:100%;max-height:100vh;}</style></head><body><video controls autoplay playsinline src="${videoUrl}"></video></body></html>`;
-                    const blob = new Blob([safeHtml], {type:'text/html'});
-                    const blobUrl = URL.createObjectURL(blob);
-                    if(playerIframe.src.startsWith('blob:')) URL.revokeObjectURL(playerIframe.src);
-                    playerIframe.src = blobUrl;
-                    videoContainer.classList.remove('hidden');
-                    videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
-                } catch(e) {
-                    alert('Error al cargar el video.');
-                } finally {
-                    episodeLoader.classList.add('hidden');
-                }
-            }
-
-            searchBtn.addEventListener('click', () => searchAnime(searchInput.value.trim()));
+            // Eventos
+            searchBtn.addEventListener('click', () => mostrarCatalogo(searchInput.value.trim()));
             searchInput.addEventListener('keypress', e => {
-                if(e.key === 'Enter') searchAnime(searchInput.value.trim());
+                if(e.key === 'Enter') mostrarCatalogo(searchInput.value.trim());
             });
+            // Filtro en tiempo real mientras escribe
+            searchInput.addEventListener('input', () => mostrarCatalogo(searchInput.value.trim()));
+
+            // Cargar catálogo al abrir la página
+            mostrarCatalogo();
         })();
     </script>
 </body>
