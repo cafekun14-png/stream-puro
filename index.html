@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Stream Puro • Catálogo Premium</title>
+    <title>Stream Puro • Portadas Reales</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -83,25 +83,12 @@
             border-color:#00d2ff;
             box-shadow:0 8px 20px rgba(0,210,255,0.3);
         }
-        /* Portada con gradiente + emoji decorativo (siempre visible) */
-        .cover {
+        .card img {
             width:100%;
             aspect-ratio:3/4;
-            background: linear-gradient(145deg, #0b1e2e 0%, #0a2a3c 40%, #061621 100%);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:3rem;
-            position:relative;
-            overflow:hidden;
-        }
-        .cover::after {
-            content:"";
-            position:absolute;
-            bottom:8px;
-            right:8px;
-            font-size:1.8rem;
-            opacity:0.6;
+            object-fit:cover;
+            display:block;
+            background:#1a1a1e;
         }
         .card h3 {
             font-size:0.8rem;
@@ -122,28 +109,36 @@
         .hidden { display:none!important; }
         .info-msg {
             text-align:center;
-            color:#00d2ff;
+            color:#a1a1aa;
             padding:20px;
-            font-size:0.9rem;
+            grid-column:1/-1;
+        }
+        .badge {
+            display:inline-block;
+            background:#00a3cc;
+            color:#000;
+            font-size:0.6rem;
+            padding:2px 6px;
+            border-radius:4px;
+            margin-left:5px;
+            font-weight:bold;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Catálogo Premium • Sin Errores</div>
+        <div class="subtitle">Catálogo con Portadas Reales • 40 Animes</div>
     </header>
 
     <div class="panel">
         <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="Buscar anime... (ej: Naruto)" autofocus>
+            <input type="text" id="searchQuery" placeholder="Buscar: Naruto, Dragon Ball, One Piece..." autofocus>
             <button id="searchBtn">BUSCAR</button>
         </div>
 
-        <!-- Resultados de búsqueda -->
         <div id="results" class="results-grid"></div>
 
-        <!-- Reproductor (simulado por ahora) -->
         <div id="videoContainer" class="video-box hidden">
             <iframe id="player" sandbox="allow-scripts allow-same-origin" allowfullscreen></iframe>
         </div>
@@ -151,48 +146,48 @@
 
     <script>
         (function() {
-            // Catálogo fijo con 40 animes populares (sin depender de internet)
+            // Catálogo con URLs de imágenes reales de MyAnimeList (CDN oficial)
             const CATALOGO = [
-                { title: "Naruto Shippuden", emoji: "🍥" },
-                { title: "One Piece", emoji: "🏴‍☠️" },
-                { title: "Demon Slayer", emoji: "👹" },
-                { title: "Attack on Titan", emoji: "⚔️" },
-                { title: "Dragon Ball Super", emoji: "🐉" },
-                { title: "Bleach TYBW", emoji: "🗡️" },
-                { title: "Jujutsu Kaisen", emoji: "🔮" },
-                { title: "Chainsaw Man", emoji: "⛓️" },
-                { title: "Spy x Family", emoji: "🕵️" },
-                { title: "My Hero Academia", emoji: "💥" },
-                { title: "Death Note", emoji: "📓" },
-                { title: "Hunter x Hunter", emoji: "🎣" },
-                { title: "Fullmetal Alchemist", emoji: "⚙️" },
-                { title: "Tokyo Ghoul", emoji: "👁️" },
-                { title: "Sword Art Online", emoji: "🗡️" },
-                { title: "One Punch Man", emoji: "👊" },
-                { title: "Black Clover", emoji: "🍀" },
-                { title: "Fairy Tail", emoji: "🔥" },
-                { title: "Haikyuu!!", emoji: "🏐" },
-                { title: "Steins;Gate", emoji: "⏳" },
-                { title: "Re:Zero", emoji: "🔄" },
-                { title: "KonoSuba", emoji: "💧" },
-                { title: "Mob Psycho 100", emoji: "🌀" },
-                { title: "Vinland Saga", emoji: "🪓" },
-                { title: "Dr. Stone", emoji: "🪨" },
-                { title: "The Promised Neverland", emoji: "🏃" },
-                { title: "Code Geass", emoji: "👁️" },
-                { title: "Cowboy Bebop", emoji: "🚀" },
-                { title: "Neon Genesis Evangelion", emoji: "🤖" },
-                { title: "Berserk", emoji: "⚫" },
-                { title: "Made in Abyss", emoji: "🕳️" },
-                { title: "Psycho-Pass", emoji: "🔫" },
-                { title: "Parasyte", emoji: "🦠" },
-                { title: "Noragami", emoji: "⛩️" },
-                { title: "Blue Lock", emoji: "⚽" },
-                { title: "Tokyo Revengers", emoji: "🏍️" },
-                { title: "Kaguya-sama: Love is War", emoji: "💘" },
-                { title: "Mushoku Tensei", emoji: "✨" },
-                { title: "Overlord", emoji: "💀" },
-                { title: "No Game No Life", emoji: "🎮" }
+                { title: "Naruto", image: "https://cdn.myanimelist.net/images/anime/13/17405l.jpg" },
+                { title: "Naruto Shippuden", image: "https://cdn.myanimelist.net/images/anime/5/17407l.jpg" },
+                { title: "Boruto: Naruto Next Generations", image: "https://cdn.myanimelist.net/images/anime/13/75521l.jpg" },
+                { title: "Dragon Ball", image: "https://cdn.myanimelist.net/images/anime/10/82594l.jpg" },
+                { title: "Dragon Ball Z", image: "https://cdn.myanimelist.net/images/anime/7/6804l.jpg" },
+                { title: "Dragon Ball Super", image: "https://cdn.myanimelist.net/images/anime/7/74673l.jpg" },
+                { title: "Dragon Ball GT", image: "https://cdn.myanimelist.net/images/anime/11/20727l.jpg" },
+                { title: "One Piece", image: "https://cdn.myanimelist.net/images/anime/6/73245l.jpg" },
+                { title: "Demon Slayer", image: "https://cdn.myanimelist.net/images/anime/1286/99889l.jpg" },
+                { title: "Attack on Titan", image: "https://cdn.myanimelist.net/images/anime/10/47347l.jpg" },
+                { title: "Jujutsu Kaisen", image: "https://cdn.myanimelist.net/images/anime/1171/109222l.jpg" },
+                { title: "Chainsaw Man", image: "https://cdn.myanimelist.net/images/anime/1806/126216l.jpg" },
+                { title: "Spy x Family", image: "https://cdn.myanimelist.net/images/anime/1441/122795l.jpg" },
+                { title: "My Hero Academia", image: "https://cdn.myanimelist.net/images/anime/10/78745l.jpg" },
+                { title: "Death Note", image: "https://cdn.myanimelist.net/images/anime/9/9453l.jpg" },
+                { title: "Hunter x Hunter (2011)", image: "https://cdn.myanimelist.net/images/anime/11/33657l.jpg" },
+                { title: "Fullmetal Alchemist: Brotherhood", image: "https://cdn.myanimelist.net/images/anime/10/50457l.jpg" },
+                { title: "Tokyo Ghoul", image: "https://cdn.myanimelist.net/images/anime/5/64449l.jpg" },
+                { title: "Sword Art Online", image: "https://cdn.myanimelist.net/images/anime/11/39717l.jpg" },
+                { title: "One Punch Man", image: "https://cdn.myanimelist.net/images/anime/12/76049l.jpg" },
+                { title: "Black Clover", image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg" },
+                { title: "Bleach", image: "https://cdn.myanimelist.net/images/anime/3/40451l.jpg" },
+                { title: "Bleach: Thousand-Year Blood War", image: "https://cdn.myanimelist.net/images/anime/1908/135431l.jpg" },
+                { title: "Fairy Tail", image: "https://cdn.myanimelist.net/images/anime/5/18179l.jpg" },
+                { title: "Haikyuu!!", image: "https://cdn.myanimelist.net/images/anime/7/76014l.jpg" },
+                { title: "Steins;Gate", image: "https://cdn.myanimelist.net/images/anime/5/73199l.jpg" },
+                { title: "Re:Zero", image: "https://cdn.myanimelist.net/images/anime/11/79410l.jpg" },
+                { title: "KonoSuba", image: "https://cdn.myanimelist.net/images/anime/8/77831l.jpg" },
+                { title: "Mob Psycho 100", image: "https://cdn.myanimelist.net/images/anime/8/80356l.jpg" },
+                { title: "Vinland Saga", image: "https://cdn.myanimelist.net/images/anime/1500/103005l.jpg" },
+                { title: "Dr. Stone", image: "https://cdn.myanimelist.net/images/anime/1613/102576l.jpg" },
+                { title: "Code Geass", image: "https://cdn.myanimelist.net/images/anime/5/50331l.jpg" },
+                { title: "Cowboy Bebop", image: "https://cdn.myanimelist.net/images/anime/4/19644l.jpg" },
+                { title: "Neon Genesis Evangelion", image: "https://cdn.myanimelist.net/images/anime/11/19846l.jpg" },
+                { title: "Berserk (1997)", image: "https://cdn.myanimelist.net/images/anime/10/21227l.jpg" },
+                { title: "Blue Lock", image: "https://cdn.myanimelist.net/images/anime/1258/126929l.jpg" },
+                { title: "Tokyo Revengers", image: "https://cdn.myanimelist.net/images/anime/1839/113331l.jpg" },
+                { title: "Kaguya-sama: Love is War", image: "https://cdn.myanimelist.net/images/anime/1295/106551l.jpg" },
+                { title: "Overlord", image: "https://cdn.myanimelist.net/images/anime/7/88019l.jpg" },
+                { title: "No Game No Life", image: "https://cdn.myanimelist.net/images/anime/5/65187l.jpg" }
             ];
 
             const searchInput = document.getElementById('searchQuery');
@@ -201,17 +196,6 @@
             const videoContainer = document.getElementById('videoContainer');
             const playerIframe = document.getElementById('player');
 
-            // Colores de fondo para las portadas (para que cada una se vea diferente)
-            const colores = [
-                'linear-gradient(145deg, #0b1e2e, #0a2a3c, #061621)',
-                'linear-gradient(145deg, #1e0b0b, #3c0a0a, #210606)',
-                'linear-gradient(145deg, #0b1e0b, #0a3c0a, #062106)',
-                'linear-gradient(145deg, #1e1e0b, #3c3c0a, #212106)',
-                'linear-gradient(145deg, #1e0b1e, #3c0a3c, #210621)',
-                'linear-gradient(145deg, #0b1e1e, #0a3c3c, #062121)'
-            ];
-
-            // Mostrar todo el catálogo al cargar
             function mostrarCatalogo(filtro = '') {
                 resultsDiv.innerHTML = '';
                 const filtradas = CATALOGO.filter(a => 
@@ -219,18 +203,17 @@
                 );
 
                 if(filtradas.length === 0) {
-                    resultsDiv.innerHTML = '<div class="info-msg">No se encontró nada. Prueba otro nombre.</div>';
+                    resultsDiv.innerHTML = '<div class="info-msg">❌ No se encontró nada con ese nombre. Prueba otra búsqueda.</div>';
                     return;
                 }
 
-                filtradas.forEach((anime, index) => {
+                filtradas.forEach(anime => {
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.onclick = () => reproducirDemo(anime.title);
                     card.innerHTML = `
-                        <div class="cover" style="background:${colores[index % colores.length]}">
-                            <span style="font-size:3rem;">${anime.emoji}</span>
-                        </div>
+                        <img src="${anime.image}" alt="${anime.title}" loading="lazy"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2230%22 y=%22200%22 font-size=%2220%22%3E${encodeURIComponent(anime.title.substring(0,15))}%3C/text%3E%3C/svg%3E';">
                         <h3>${anime.title}</h3>
                     `;
                     resultsDiv.appendChild(card);
@@ -238,7 +221,6 @@
             }
 
             function reproducirDemo(titulo) {
-                // Por ahora mostramos un placeholder elegante
                 const html = `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
@@ -260,15 +242,13 @@ p{color:#a1a1aa;text-align:center;font-size:0.9rem;}
                 videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
             }
 
-            // Eventos
             searchBtn.addEventListener('click', () => mostrarCatalogo(searchInput.value.trim()));
             searchInput.addEventListener('keypress', e => {
                 if(e.key === 'Enter') mostrarCatalogo(searchInput.value.trim());
             });
-            // Filtro en tiempo real mientras escribe
             searchInput.addEventListener('input', () => mostrarCatalogo(searchInput.value.trim()));
 
-            // Cargar catálogo al abrir la página
+            // Cargar todo al abrir
             mostrarCatalogo();
         })();
     </script>
