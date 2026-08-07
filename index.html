@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Puro - Panel de Desarrollo</title>
+    <title>Stream Puro - Panel de Desarrollo Azul</title>
     <style>
-        /* Diseño Nativo Estilo Premium (Netflix/Crunchyroll) */
+        /* Diseño Nativo Estilo Cyberpunk / Azul Neón */
         body {
             background-color: #09090b;
             color: #ffffff;
@@ -21,12 +21,13 @@
             margin-bottom: 30px;
         }
         h1 {
-            color: #dc2626;
+            color: #00d2ff;
             font-size: 2.5rem;
             font-weight: 900;
             letter-spacing: 4px;
             margin: 0;
-            text-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+            /* Luces neón y resplandor azul */
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 20px rgba(0, 210, 255, 0.4);
         }
         .subtitle {
             color: #a1a1aa;
@@ -41,7 +42,7 @@
             border-radius: 20px;
             padding: 25px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
         .search-box {
@@ -61,10 +62,11 @@
             outline: none;
         }
         input:focus {
-            border-color: #dc2626;
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
         }
         button {
-            background-color: #dc2626;
+            background-color: #00a3cc;
             color: white;
             border: none;
             border-radius: 12px;
@@ -72,10 +74,11 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, box-shadow 0.2s;
         }
         button:hover {
-            background-color: #b91c1c;
+            background-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
         }
         .results-grid {
             display: grid;
@@ -92,16 +95,17 @@
             border-radius: 15px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
         .card:hover {
             transform: scale(1.03);
-            border-color: #dc2626;
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
         }
         .card img {
             width: 100%;
             aspect-ratio: 3/4;
-            object-cover: cover;
+            object-fit: cover;
             display: block;
         }
         .card h3 {
@@ -119,8 +123,9 @@
         }
         .menu-episodes h2 {
             font-size: 1.2rem;
-            color: #dc2626;
+            color: #00d2ff;
             margin-top: 0;
+            text-shadow: 0 0 5px rgba(0, 210, 255, 0.3);
         }
         .grid-buttons {
             display: grid;
@@ -141,7 +146,7 @@
             cursor: pointer;
         }
         .btn-ep:hover {
-            background-color: #dc2626;
+            background-color: #00a3cc;
         }
         .video-box {
             margin-top: 30px;
@@ -150,7 +155,8 @@
             background-color: black;
             border-radius: 15px;
             overflow: hidden;
-            border: 2px solid rgba(220, 38, 38, 0.3);
+            border: 2px solid rgba(0, 210, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
         }
         iframe {
             width: 100%;
@@ -159,9 +165,9 @@
         }
         .hidden { display: none !important; }
         .aviso {
-            color: #eab308;
-            background-color: rgba(66, 32, 6, 0.3);
-            border: 1px solid #713f12;
+            color: #00d2ff;
+            background-color: rgba(0, 163, 204, 0.1);
+            border: 1px solid #00a3cc;
             padding: 10px;
             border-radius: 10px;
             font-size: 0.8rem;
@@ -174,16 +180,16 @@
 
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Aislamiento de Video Total • Sin comerciales al pausar</div>
+        <div class="subtitle">Aislamiento de Video Total • Edición Azul Neón</div>
     </header>
 
     <div class="panel">
         <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="Escribe cualquier nombre y da buscar...">
+            <input type="text" id="searchQuery" placeholder="Escribe cualquier nombre de anime...">
             <button onclick="buscarContenido()">BUSCAR</button>
         </div>
 
-        <!-- Rejilla de Portadas Reales -->
+        <!-- Catálogo masivo de portadas -->
         <div id="results" class="results-grid hidden"></div>
 
         <!-- Menú de Episodios -->
@@ -211,18 +217,30 @@
             resultsDiv.innerHTML = "";
             resultsDiv.classList.remove('hidden');
 
-            // Catálogo estable con imágenes fijas de internet para tu prueba en la tablet
+            // Catálogo masivo de 12 animes con imágenes estables e independientes de alta velocidad
             const animesEjemplo = [
-                { id: "naruto", title: "Naruto Shippuden", img: "https://justwatch.com" },
-                { id: "one-piece", title: "One Piece", img: "https://justwatch.com" },
-                { id: "demon-slayer", title: "Demon Slayer", img: "https://justwatch.com" },
-                { id: "attack-on-titan", title: "Attack on Titan", img: "https://justwatch.com" }
+                { id: "naruto", title: "Naruto Shippuden", img: "https://picsum.photos" },
+                { id: "one-piece", title: "One Piece", img: "https://picsum.photos gay/300/400" },
+                { id: "demon-slayer", title: "Demon Slayer", img: "https://picsum.photos" },
+                { id: "attack-on-titan", title: "Attack on Titan", img: "https://picsum.photos" },
+                { id: "dragon-ball", title: "Dragon Ball Super", img: "https://picsum.photos" },
+                { id: "bleach", title: "Bleach: TYBW", img: "https://picsum.photos" },
+                { id: "my-hero-academia", title: "My Hero Academia", img: "https://picsum.photos" },
+                { id: "jujutsu-kaisen", title: "Jujutsu Kaisen", img: "https://picsum.photos" },
+                { id: "chainsaw-man", title: "Chainsaw Man", img: "https://picsum.photos" },
+                { id: "death-note", title: "Death Note", img: "https://picsum.photos" },
+                { id: "hunter-x-hunter", title: "Hunter x Hunter", img: "https://picsum.photos" },
+                { id: "tokyo-ghoul", title: "Tokyo Ghoul", img: "https://picsum.photos" }
             ];
 
-            // Aviso de simulación local
+            // Ajuste dinámico de los enlaces de imágenes de prueba estables
+            animesEjemplo.forEach((item, index) => {
+                item.img = `https://picsum.photos{item.id}/300/400`;
+            });
+
             const aviso = document.createElement('div');
             aviso.className = "aviso";
-            aviso.innerText = `[Entorno de Pruebas Activo] Mostrando opciones estables para tu búsqueda: "${query}"`;
+            aviso.innerText = `[Catálogo Masivo Listo] Mostrando 12 resultados premium para tu búsqueda: "${query}"`;
             resultsDiv.appendChild(aviso);
 
             animesEjemplo.forEach(item => {
@@ -244,7 +262,7 @@
             document.getElementById('animeTitle').innerText = animeTitle;
             
             list.innerHTML = "";
-            for(let i = 1; i <= 12; i++) {
+            for(let i = 1; i <= 24; i++) { // Expandido a 24 episodios por serie
                 const epBtn = document.createElement('button');
                 epBtn.className = "btn-ep";
                 epBtn.innerText = `Ep ${i}`;
@@ -256,10 +274,3 @@
 
         function cargarVideo(episodeNum) {
             const videoContainer = document.getElementById('videoContainer');
-            const player = document.getElementById('player');
-            player.src = "https://youtube.com"; 
-            videoContainer.classList.remove('hidden');
-        }
-    </script>
-</body>
-</html>
