@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Puro - Panel Azul Neón</title>
+    <title>Stream Puro - Edición Azul Neón</title>
     <style>
-        /* Diseño Nativo Estilo Azul Neón con Luces */
+        /* Diseño Azul Neón con Luces Premium */
         body {
             background-color: #09090b;
             color: #ffffff;
@@ -26,7 +26,6 @@
             font-weight: 900;
             letter-spacing: 4px;
             margin: 0;
-            /* Resplandor neón azul integrado */
             text-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 20px rgba(0, 210, 255, 0.4);
         }
         .subtitle {
@@ -102,17 +101,29 @@
             border-color: #00d2ff;
             box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
         }
-        .card img {
+        /* Contenedor de la portada con gradiente geométrico nativo */
+        .cover-box {
             width: 100%;
             aspect-ratio: 3/4;
-            object-fit: cover;
-            display: block;
+            background: linear-gradient(135deg, #005f73 0%, #0a9396 50%, #001219 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #3f3f46;
+        }
+        .cover-box::after {
+            content: "✦";
+            color: rgba(0, 210, 255, 0.4);
+            font-size: 2rem;
+            text-shadow: 0 0 10px #00d2ff;
         }
         .card h3 {
             font-size: 0.8rem;
-            margin: 10px;
+            margin: 12px 10px;
             color: #e4e4e7;
             text-align: center;
+            font-weight: bold;
         }
         .menu-episodes {
             margin-top: 30px;
@@ -144,6 +155,7 @@
             font-weight: bold;
             font-size: 0.8rem;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
         .btn-ep:hover {
             background-color: #00a3cc;
@@ -189,7 +201,7 @@
             <button onclick="buscarContenido()">BUSCAR</button>
         </div>
 
-        <!-- Catálogo masivo de portadas -->
+        <!-- Catálogo masivo de tarjetas visuales nativas -->
         <div id="results" class="results-grid hidden"></div>
 
         <!-- Menú de Episodios -->
@@ -217,20 +229,20 @@
             resultsDiv.innerHTML = "";
             resultsDiv.classList.remove('hidden');
 
-            // Catálogo corregido de 12 animes con enlaces de imágenes estables generados por semilla limpia
+            // Catálogo masivo de 12 opciones con portadas geométricas integradas al código (Cero errores de internet)
             const animesEjemplo = [
-                { id: "naruto", title: "Naruto Shippuden", img: "https://picsum.photos" },
-                { id: "one-piece", title: "One Piece", img: "https://picsum.photos" },
-                { id: "demon-slayer", title: "Demon Slayer", img: "https://picsum.photos" },
-                { id: "attack-on-titan", title: "Attack on Titan", img: "https://picsum.photos" },
-                { id: "dragon-ball", title: "Dragon Ball Super", img: "https://picsum.photos" },
-                { id: "bleach", title: "Bleach: TYBW", img: "https://picsum.photos" },
-                { id: "my-hero-academia", title: "My Hero Academia", img: "https://picsum.photos" },
-                { id: "jujutsu-kaisen", title: "Jujutsu Kaisen", img: "https://picsum.photos" },
-                { id: "chainsaw-man", title: "Chainsaw Man", img: "https://picsum.photos" },
-                { id: "death-note", title: "Death Note", img: "https://picsum.photos" },
-                { id: "hunter-x-hunter", title: "Hunter x Hunter", img: "https://picsum.photos" },
-                { id: "tokyo-ghoul", title: "Tokyo Ghoul", img: "https://picsum.photos" }
+                { id: "naruto", title: "Naruto Shippuden" },
+                { id: "one-piece", title: "One Piece" },
+                { id: "demon-slayer", title: "Demon Slayer" },
+                { id: "attack-on-titan", title: "Attack on Titan" },
+                { id: "dragon-ball", title: "Dragon Ball Super" },
+                { id: "bleach", title: "Bleach: TYBW" },
+                { id: "my-hero-academia", title: "My Hero Academia" },
+                { id: "jujutsu-kaisen", title: "Jujutsu Kaisen" },
+                { id: "chainsaw-man", title: "Chainsaw Man" },
+                { id: "death-note", title: "Death Note" },
+                { id: "hunter-x-hunter", title: "Hunter x Hunter" },
+                { id: "tokyo-ghoul", title: "Tokyo Ghoul" }
             ];
 
             const aviso = document.createElement('div');
@@ -243,7 +255,7 @@
                 card.className = "card";
                 card.onclick = () => desplegarEpisodios(item.id, item.title);
                 card.innerHTML = `
-                    <img src="${item.img}" alt="${item.title}">
+                    <div class="cover-box"></div>
                     <h3>${item.title}</h3>
                 `;
                 resultsDiv.appendChild(card);
@@ -265,6 +277,7 @@
                 list.appendChild(epBtn);
             }
             menu.classList.remove('hidden');
+            menu.scrollIntoView({ behavior: 'smooth' });
         }
 
         function cargarVideo(episodeNum) {
@@ -272,6 +285,7 @@
             const player = document.getElementById('player');
             player.src = "https://youtube.com"; 
             videoContainer.classList.remove('hidden');
+            videoContainer.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
