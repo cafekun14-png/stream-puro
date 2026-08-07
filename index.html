@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Puro - Panel de Desarrollo Azul</title>
+    <title>Stream Puro - Panel Azul Neón</title>
     <style>
-        /* Diseño Nativo Estilo Cyberpunk / Azul Neón */
+        /* Diseño Nativo Estilo Azul Neón con Luces */
         body {
             background-color: #09090b;
             color: #ffffff;
@@ -26,7 +26,7 @@
             font-weight: 900;
             letter-spacing: 4px;
             margin: 0;
-            /* Luces neón y resplandor azul */
+            /* Resplandor neón azul integrado */
             text-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 20px rgba(0, 210, 255, 0.4);
         }
         .subtitle {
@@ -217,10 +217,10 @@
             resultsDiv.innerHTML = "";
             resultsDiv.classList.remove('hidden');
 
-            // Catálogo masivo de 12 animes con imágenes estables e independientes de alta velocidad
+            // Catálogo corregido de 12 animes con enlaces de imágenes estables generados por semilla limpia
             const animesEjemplo = [
                 { id: "naruto", title: "Naruto Shippuden", img: "https://picsum.photos" },
-                { id: "one-piece", title: "One Piece", img: "https://picsum.photos gay/300/400" },
+                { id: "one-piece", title: "One Piece", img: "https://picsum.photos" },
                 { id: "demon-slayer", title: "Demon Slayer", img: "https://picsum.photos" },
                 { id: "attack-on-titan", title: "Attack on Titan", img: "https://picsum.photos" },
                 { id: "dragon-ball", title: "Dragon Ball Super", img: "https://picsum.photos" },
@@ -232,11 +232,6 @@
                 { id: "hunter-x-hunter", title: "Hunter x Hunter", img: "https://picsum.photos" },
                 { id: "tokyo-ghoul", title: "Tokyo Ghoul", img: "https://picsum.photos" }
             ];
-
-            // Ajuste dinámico de los enlaces de imágenes de prueba estables
-            animesEjemplo.forEach((item, index) => {
-                item.img = `https://picsum.photos{item.id}/300/400`;
-            });
 
             const aviso = document.createElement('div');
             aviso.className = "aviso";
@@ -262,7 +257,7 @@
             document.getElementById('animeTitle').innerText = animeTitle;
             
             list.innerHTML = "";
-            for(let i = 1; i <= 24; i++) { // Expandido a 24 episodios por serie
+            for(let i = 1; i <= 24; i++) { 
                 const epBtn = document.createElement('button');
                 epBtn.className = "btn-ep";
                 epBtn.innerText = `Ep ${i}`;
@@ -274,3 +269,10 @@
 
         function cargarVideo(episodeNum) {
             const videoContainer = document.getElementById('videoContainer');
+            const player = document.getElementById('player');
+            player.src = "https://youtube.com"; 
+            videoContainer.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
