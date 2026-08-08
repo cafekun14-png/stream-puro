@@ -61,6 +61,12 @@
             cursor:pointer;
         }
         button:hover { background:#00d2ff; }
+        .btn-sm {
+            background:#3f3f46;
+            font-size:0.75rem;
+            padding:8px 16px;
+            margin:0 4px;
+        }
         .results-grid {
             display:grid;
             grid-template-columns: repeat(2,1fr);
@@ -83,13 +89,6 @@
             border-color:#00d2ff;
             box-shadow:0 8px 20px rgba(0,210,255,0.3);
         }
-        .card img {
-            width:100%;
-            aspect-ratio:3/4;
-            object-fit:cover;
-            display:block;
-            background:#1a1a1e;
-        }
         .card .img-wrap {
             width:100%;
             aspect-ratio:3/4;
@@ -98,6 +97,13 @@
             align-items:center;
             justify-content:center;
             overflow:hidden;
+            position:relative;
+        }
+        .card .img-wrap img {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
         }
         .card .img-wrap .loading-dot {
             width:10px;height:10px;border-radius:50%;
@@ -111,6 +117,39 @@
             color:#e4e4e7;
             text-align:center;
         }
+        .menu-episodes {
+            margin-top:25px;
+            background-color:#0c0c10;
+            border:1px solid #27272a;
+            padding:20px 16px;
+            border-radius:18px;
+        }
+        .menu-episodes h2 {
+            font-size:1.2rem;
+            color:#00d2ff;
+            margin-bottom:15px;
+            text-shadow: 0 0 5px rgba(0,210,255,0.3);
+        }
+        .grid-buttons {
+            display:grid;
+            grid-template-columns: repeat(4,1fr);
+            gap:8px;
+        }
+        @media(min-width:500px){.grid-buttons{grid-template-columns:repeat(6,1fr)}}
+        @media(min-width:700px){.grid-buttons{grid-template-columns:repeat(8,1fr)}}
+        .btn-ep {
+            background-color:#27272a;
+            color:white;
+            padding:10px 4px;
+            border:none;
+            border-radius:8px;
+            font-weight:bold;
+            font-size:0.8rem;
+            cursor:pointer;
+            transition: 0.2s;
+            text-align:center;
+        }
+        .btn-ep:hover { background:#00a3cc; }
         .video-box {
             margin-top:25px;
             width:100%;
@@ -128,6 +167,17 @@
             padding:20px;
             grid-column:1/-1;
         }
+        .btn-back {
+            background:#3f3f46;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:6px 14px;
+            font-size:0.75rem;
+            cursor:pointer;
+            margin-bottom:10px;
+        }
+        .btn-back:hover { background:#52525b; }
     </style>
 </head>
 <body>
@@ -143,10 +193,16 @@
         </div>
 
         <div style="text-align:center;margin-bottom:10px;">
-            <button id="retryBtn" style="background:#3f3f46;font-size:0.75rem;padding:8px 16px;">🔄 Reintentar portadas que fallaron</button>
+            <button id="retryBtn" class="btn-sm">🔄 Reintentar portadas fallidas</button>
+            <button id="backToCatBtn" class="btn-sm hidden">⬅ Volver al catálogo</button>
         </div>
 
         <div id="results" class="results-grid"></div>
+
+        <div id="episodeMenu" class="menu-episodes hidden">
+            <h2 id="animeTitle">Capítulos</h2>
+            <div id="episodeList" class="grid-buttons"></div>
+        </div>
 
         <div id="videoContainer" class="video-box hidden">
             <iframe id="player" sandbox="allow-scripts allow-same-origin" allowfullscreen></iframe>
@@ -167,6 +223,8 @@
             "Blue Lock", "Tokyo Revengers", "Kaguya-sama: Love is War", "Overlord",
             "No Game No Life"
         ];
+
+        var EPISODIOS_POR_ANIME = 24;
 
         var imageCache = {};
         var pendingQueue = [];
@@ -223,19 +281,15 @@
                 return r.json().then(function(data) {
                     var lista = data && data.data && data.data.Page && data.data.Page.media;
                     if (!lista || lista.length === 0) return null;
-
                     var normalizar = function(s) { return (s || '').toLowerCase().trim(); };
                     var buscado = normalizar(titulo);
-
                     var exacto = lista.filter(function(m) {
                         var t = m.title || {};
                         return normalizar(t.english) === buscado || normalizar(t.romaji) === buscado;
                     })[0];
-
                     var elegido = exacto || lista.slice().sort(function(a, b) {
                         return (b.popularity || 0) - (a.popularity || 0);
                     })[0];
-
                     var img = elegido && elegido.coverImage && (elegido.coverImage.extraLarge || elegido.coverImage.large);
                     return img || null;
                 });
@@ -296,10 +350,19 @@
         var resultsDiv = document.getElementById('results');
         var videoContainer = document.getElementById('videoContainer');
         var playerIframe = document.getElementById('player');
+        var episodeMenu = document.getElementById('episodeMenu');
+        var episodeTitle = document.getElementById('animeTitle');
+        var episodeList = document.getElementById('episodeList');
+        var backToCatBtn = document.getElementById('backToCatBtn');
 
         function mostrarCatalogo(filtro) {
             filtro = filtro || '';
             resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('hidden');
+            episodeMenu.classList.add('hidden');
+            videoContainer.classList.add('hidden');
+            backToCatBtn.classList.add('hidden');
+
             var filtradas = CATALOGO.filter(function(titulo) {
                 return titulo.toLowerCase().indexOf(filtro.toLowerCase()) !== -1;
             });
@@ -313,7 +376,9 @@
                 var card = document.createElement('div');
                 card.className = 'card';
                 card.setAttribute('data-title', titulo);
-                card.onclick = function() { reproducirDemo(titulo); };
+                card.onclick = function() {
+                    mostrarEpisodios(titulo);
+                };
 
                 var wrap = document.createElement('div');
                 wrap.className = 'img-wrap';
@@ -332,8 +397,30 @@
             });
         }
 
-        function reproducirDemo(titulo) {
-            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#00d2ff;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}</style></head><body><div class="icon">🎬</div><h2>' + titulo + '</h2><p>Reproductor listo</p></body></html>';
+        function mostrarEpisodios(titulo) {
+            resultsDiv.classList.add('hidden');
+            episodeMenu.classList.remove('hidden');
+            videoContainer.classList.add('hidden');
+            backToCatBtn.classList.remove('hidden');
+            episodeTitle.textContent = titulo + ' - Capítulos';
+            episodeList.innerHTML = '';
+
+            for (var i = 1; i <= EPISODIOS_POR_ANIME; i++) {
+                var btn = document.createElement('button');
+                btn.className = 'btn-ep';
+                btn.textContent = 'Ep ' + i;
+                (function(epNum) {
+                    btn.onclick = function() {
+                        reproducirVideo(titulo, epNum);
+                    };
+                })(i);
+                episodeList.appendChild(btn);
+            }
+            episodeMenu.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        }
+
+        function reproducirVideo(titulo, episodio) {
+            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#00d2ff;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}</style></head><body><div class="icon">🎬</div><h2>' + titulo + '</h2><p>Episodio ' + episodio + ' · Reproduciendo</p><p style="font-size:0.7rem;color:#52525b;">Video de muestra funcional</p></body></html>';
             var blob = new Blob([html], {type:'text/html'});
             var blobUrl = URL.createObjectURL(blob);
             if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
@@ -345,6 +432,9 @@
         }
 
         document.getElementById('retryBtn').addEventListener('click', reintentarFallidas);
+        backToCatBtn.addEventListener('click', function() {
+            mostrarCatalogo(searchInput.value.trim());
+        });
 
         searchBtn.addEventListener('click', function() {
             mostrarCatalogo(searchInput.value.trim());
