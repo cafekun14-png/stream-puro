@@ -90,6 +90,21 @@
             display:block;
             background:#1a1a1e;
         }
+        .card .img-wrap {
+            width:100%;
+            aspect-ratio:3/4;
+            background:#1a1a1e;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+        }
+        .card .img-wrap .loading-dot {
+            width:10px;height:10px;border-radius:50%;
+            background:#00d2ff;
+            animation:pulse 1s infinite ease-in-out;
+        }
+        @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:1} }
         .card h3 {
             font-size:0.8rem;
             margin:10px 8px;
@@ -118,7 +133,7 @@
 <body>
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Catálogo con Portadas Reales 100% Verificadas</div>
+        <div class="subtitle">Catálogo con Portadas Reales (AniList)</div>
     </header>
 
     <div class="panel">
@@ -136,47 +151,80 @@
 
     <script>
         var CATALOGO = [
-            { title: "Naruto", image: "https://cdn.myanimelist.net/images/anime/13/17405l.jpg" },
-            { title: "Naruto Shippuden", image: "https://cdn.myanimelist.net/images/anime/5/17407l.jpg" },
-            { title: "Boruto: Naruto Next Generations", image: "https://cdn.myanimelist.net/images/anime/13/75521l.jpg" },
-            { title: "Dragon Ball", image: "https://cdn.myanimelist.net/images/anime/10/82594l.jpg" },
-            { title: "Dragon Ball Z", image: "https://cdn.myanimelist.net/images/anime/7/6804l.jpg" },
-            { title: "Dragon Ball Super", image: "https://cdn.myanimelist.net/images/anime/7/74673l.jpg" },
-            { title: "Dragon Ball GT", image: "https://cdn.myanimelist.net/images/anime/11/20727l.jpg" },
-            { title: "One Piece", image: "https://cdn.myanimelist.net/images/anime/6/73245l.jpg" },
-            { title: "Demon Slayer", image: "https://cdn.myanimelist.net/images/anime/1286/99889l.jpg" },
-            { title: "Attack on Titan", image: "https://cdn.myanimelist.net/images/anime/10/47347l.jpg" },
-            { title: "Jujutsu Kaisen", image: "https://cdn.myanimelist.net/images/anime/1171/109222l.jpg" },
-            { title: "Chainsaw Man", image: "https://cdn.myanimelist.net/images/anime/1806/126216l.jpg" },
-            { title: "Spy x Family", image: "https://cdn.myanimelist.net/images/anime/1441/122795l.jpg" },
-            { title: "My Hero Academia", image: "https://cdn.myanimelist.net/images/anime/10/78745l.jpg" },
-            { title: "Death Note", image: "https://cdn.myanimelist.net/images/anime/9/9453l.jpg" },
-            { title: "Hunter x Hunter (2011)", image: "https://cdn.myanimelist.net/images/anime/11/33657l.jpg" },
-            { title: "Fullmetal Alchemist: Brotherhood", image: "https://cdn.myanimelist.net/images/anime/10/50457l.jpg" },
-            { title: "Tokyo Ghoul", image: "https://cdn.myanimelist.net/images/anime/5/64449l.jpg" },
-            { title: "Sword Art Online", image: "https://cdn.myanimelist.net/images/anime/11/39717l.jpg" },
-            { title: "One Punch Man", image: "https://cdn.myanimelist.net/images/anime/12/76049l.jpg" },
-            { title: "Black Clover", image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg" },
-            { title: "Bleach", image: "https://cdn.myanimelist.net/images/anime/3/40451l.jpg" },
-            { title: "Bleach: Thousand-Year Blood War", image: "https://cdn.myanimelist.net/images/anime/1908/135431l.jpg" },
-            { title: "Fairy Tail", image: "https://cdn.myanimelist.net/images/anime/5/18179l.jpg" },
-            { title: "Haikyuu!!", image: "https://cdn.myanimelist.net/images/anime/7/76014l.jpg" },
-            { title: "Steins;Gate", image: "https://cdn.myanimelist.net/images/anime/5/73199l.jpg" },
-            { title: "Re:Zero", image: "https://cdn.myanimelist.net/images/anime/11/79410l.jpg" },
-            { title: "KonoSuba", image: "https://cdn.myanimelist.net/images/anime/8/77831l.jpg" },
-            { title: "Mob Psycho 100", image: "https://cdn.myanimelist.net/images/anime/8/80356l.jpg" },
-            { title: "Vinland Saga", image: "https://cdn.myanimelist.net/images/anime/1500/103005l.jpg" },
-            { title: "Dr. Stone", image: "https://cdn.myanimelist.net/images/anime/1613/102576l.jpg" },
-            { title: "Code Geass", image: "https://cdn.myanimelist.net/images/anime/5/50331l.jpg" },
-            { title: "Cowboy Bebop", image: "https://cdn.myanimelist.net/images/anime/4/19644l.jpg" },
-            { title: "Neon Genesis Evangelion", image: "https://cdn.myanimelist.net/images/anime/11/19846l.jpg" },
-            { title: "Berserk (1997)", image: "https://cdn.myanimelist.net/images/anime/10/21227l.jpg" },
-            { title: "Blue Lock", image: "https://cdn.myanimelist.net/images/anime/1258/126929l.jpg" },
-            { title: "Tokyo Revengers", image: "https://cdn.myanimelist.net/images/anime/1839/113331l.jpg" },
-            { title: "Kaguya-sama: Love is War", image: "https://cdn.myanimelist.net/images/anime/1295/106551l.jpg" },
-            { title: "Overlord", image: "https://cdn.myanimelist.net/images/anime/7/88019l.jpg" },
-            { title: "No Game No Life", image: "https://cdn.myanimelist.net/images/anime/5/65187l.jpg" }
+            "Naruto", "Naruto Shippuden", "Boruto: Naruto Next Generations",
+            "Dragon Ball", "Dragon Ball Z", "Dragon Ball Super", "Dragon Ball GT",
+            "One Piece", "Demon Slayer", "Attack on Titan", "Jujutsu Kaisen",
+            "Chainsaw Man", "Spy x Family", "My Hero Academia", "Death Note",
+            "Hunter x Hunter (2011)", "Fullmetal Alchemist: Brotherhood", "Tokyo Ghoul",
+            "Sword Art Online", "One Punch Man", "Black Clover", "Bleach",
+            "Bleach: Thousand-Year Blood War", "Fairy Tail", "Haikyuu!!", "Steins;Gate",
+            "Re:Zero", "KonoSuba", "Mob Psycho 100", "Vinland Saga", "Dr. Stone",
+            "Code Geass", "Cowboy Bebop", "Neon Genesis Evangelion", "Berserk (1997)",
+            "Blue Lock", "Tokyo Revengers", "Kaguya-sama: Love is War", "Overlord",
+            "No Game No Life"
         ];
+
+        var imageCache = {};
+        var pendingQueue = [];
+        var activeRequests = 0;
+        var MAX_CONCURRENT = 4;
+
+        var PLACEHOLDER = function(titulo) {
+            return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2220%22 y=%22200%22 font-size=%2216%22%3E' + encodeURIComponent(titulo.substring(0,14)) + '%3C/text%3E%3C/svg%3E';
+        };
+
+        function buscarPortadaAniList(titulo) {
+            var query = 'query ($search: String) { Media(search: $search, type: ANIME) { coverImage { extraLarge large } } }';
+            return fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ query: query, variables: { search: titulo } })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var media = data && data.data && data.data.Media;
+                var img = media && media.coverImage && (media.coverImage.extraLarge || media.coverImage.large);
+                return img || null;
+            })
+            .catch(function() { return null; });
+        }
+
+        function procesarCola() {
+            while (activeRequests < MAX_CONCURRENT && pendingQueue.length > 0) {
+                var job = pendingQueue.shift();
+                activeRequests++;
+                (function(job) {
+                    buscarPortadaAniList(job.titulo).then(function(url) {
+                        activeRequests--;
+                        imageCache[job.titulo] = url || 'ERROR';
+                        actualizarImagenesEnPantalla(job.titulo, url);
+                        procesarCola();
+                    });
+                })(job);
+            }
+        }
+
+        function actualizarImagenesEnPantalla(titulo, url) {
+            var nodos = document.querySelectorAll('.card[data-title="' + CSS.escape(titulo) + '"] .img-wrap');
+            nodos.forEach(function(wrap) {
+                var img = document.createElement('img');
+                img.alt = titulo;
+                img.loading = 'lazy';
+                img.src = url || PLACEHOLDER(titulo);
+                wrap.innerHTML = '';
+                wrap.appendChild(img);
+            });
+        }
+
+        function pedirImagen(titulo) {
+            if (imageCache[titulo] === undefined) {
+                imageCache[titulo] = 'PENDING';
+                pendingQueue.push({ titulo: titulo });
+                procesarCola();
+            } else if (imageCache[titulo] !== 'PENDING') {
+                actualizarImagenesEnPantalla(titulo, imageCache[titulo] === 'ERROR' ? null : imageCache[titulo]);
+            }
+        }
 
         var searchInput = document.getElementById('searchQuery');
         var searchBtn = document.getElementById('searchBtn');
@@ -187,8 +235,8 @@
         function mostrarCatalogo(filtro) {
             filtro = filtro || '';
             resultsDiv.innerHTML = '';
-            var filtradas = CATALOGO.filter(function(a) {
-                return a.title.toLowerCase().indexOf(filtro.toLowerCase()) !== -1;
+            var filtradas = CATALOGO.filter(function(titulo) {
+                return titulo.toLowerCase().indexOf(filtro.toLowerCase()) !== -1;
             });
 
             if (filtradas.length === 0) {
@@ -196,25 +244,26 @@
                 return;
             }
 
-            filtradas.forEach(function(anime) {
+            filtradas.forEach(function(titulo) {
                 var card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = function() {
-                    reproducirDemo(anime.title);
-                };
-                var img = document.createElement('img');
-                img.src = anime.image;
-                img.alt = anime.title;
-                img.loading = 'lazy';
-                img.onerror = function() {
-                    this.onerror = null;
-                    this.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2230%22 y=%22200%22 font-size=%2218%22%3E' + encodeURIComponent(anime.title.substring(0,12)) + '%3C/text%3E%3C/svg%3E';
-                };
+                card.setAttribute('data-title', titulo);
+                card.onclick = function() { reproducirDemo(titulo); };
+
+                var wrap = document.createElement('div');
+                wrap.className = 'img-wrap';
+                var dot = document.createElement('div');
+                dot.className = 'loading-dot';
+                wrap.appendChild(dot);
+
                 var title = document.createElement('h3');
-                title.textContent = anime.title;
-                card.appendChild(img);
+                title.textContent = titulo;
+
+                card.appendChild(wrap);
                 card.appendChild(title);
                 resultsDiv.appendChild(card);
+
+                pedirImagen(titulo);
             });
         }
 
