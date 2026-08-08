@@ -498,17 +498,28 @@
         }
 
         function reproducirVideo(titulo, episodio) {
-            var htmlCargando = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#00d2ff;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}.loader{border:3px solid #333;border-top:3px solid #00d2ff;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:20px auto;}@keyframes spin{to{transform:rotate(360deg);}}</style></head><body><div class="icon">🔍</div><h2>' + titulo + '</h2><p>Buscando Episodio ' + episodio + '...</p><div class="loader"></div></body></html>';
-            
-            var blobCargando = new Blob([htmlCargando], {type:'text/html'});
-            var blobUrlCargando = URL.createObjectURL(blobCargando);
-            
-            if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
-                URL.revokeObjectURL(playerIframe.src);
-            }
-            playerIframe.src = blobUrlCargando;
-            videoContainer.classList.remove('hidden');
-            videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
+    var videosPrueba = [
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+    ];
+    
+    var videoUrl = videosPrueba[(episodio - 1) % videosPrueba.length];
+    
+    var htmlVideo = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{width:100%;height:100%;max-height:100vh;background:#000;outline:none;}.info{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.7);padding:4px 10px;border-radius:6px;font-family:sans-serif;font-size:14px;z-index:10;pointer-events:none;}</style></head><body><div class="info">' + titulo + ' Ep ' + episodio + ' 🎬 Muestra</div><video controls autoplay playsinline src="' + videoUrl + '"></video></body></html>';
+    
+    var blobVideo = new Blob([htmlVideo], {type:'text/html'});
+    var blobUrlVideo = URL.createObjectURL(blobVideo);
+    
+    if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
+        URL.revokeObjectURL(playerIframe.src);
+    }
+    playerIframe.src = blobUrlVideo;
+    videoContainer.classList.remove('hidden');
+    videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
+        }
             
             buscarEnlaceReal(titulo, episodio, function(videoUrl) {
                 if (!videoUrl) {
