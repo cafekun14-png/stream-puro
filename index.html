@@ -150,6 +150,8 @@
     </div>
 
     <script>
+        // Solo los títulos: la portada se busca en tiempo real, así nunca queda desincronizada
+        // y agregar animes nuevos no requiere buscar URLs a mano.
         var CATALOGO = [
             "Naruto", "Naruto Shippuden", "Boruto: Naruto Next Generations",
             "Dragon Ball", "Dragon Ball Z", "Dragon Ball Super", "Dragon Ball GT",
@@ -164,27 +166,64 @@
             "No Game No Life"
         ];
 
-        var imageCache = {};
-        var pendingQueue = [];
+        var imageCache = {};      // titulo -> url ya resuelta (evita pedirla dos veces)
+        var pendingQueue = [];    // cola de títulos por buscar
         var activeRequests = 0;
-        var MAX_CONCURRENT = 4;
+        var MAX_CONCURRENT = 2;   // menos peticiones a la vez para no chocar con el límite de AniList
+        var STORAGE_KEY = 'streampuro_portadas_v1';
 
         var PLACEHOLDER = function(titulo) {
             return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2220%22 y=%22200%22 font-size=%2216%22%3E' + encodeURIComponent(titulo.substring(0,14)) + '%3C/text%3E%3C/svg%3E';
         };
 
-        function buscarPortadaAniList(titulo) {
+        // Cache persistente en el navegador: una vez resuelta una portada, no se vuelve a pedir
+        function cargarCachePersistente() {
+            try {
+                var raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    var guardado = JSON.parse(raw);
+                    for (var k in guardado) { imageCache[k] = guardado[k]; }
+                }
+            } catch (e) { /* si falla, seguimos sin cache persistente */ }
+        }
+        function guardarCachePersistente() {
+            try {
+                var soloExitosas = {};
+                for (var k in imageCache) {
+                    if (imageCache[k] && imageCache[k] !== 'PENDING' && imageCache[k] !== 'ERROR') {
+                        soloExitosas[k] = imageCache[k];
+                    }
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(soloExitosas));
+            } catch (e) { /* si falla, no pasa nada grave */ }
+        }
+        cargarCachePersistente();
+
+        function esperar(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
+
+        function buscarPortadaAniList(titulo, intento) {
+            intento = intento || 0;
             var query = 'query ($search: String) { Media(search: $search, type: ANIME) { coverImage { extraLarge large } } }';
             return fetch('https://graphql.anilist.co', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ query: query, variables: { search: titulo } })
             })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                var media = data && data.data && data.data.Media;
-                var img = media && media.coverImage && (media.coverImage.extraLarge || media.coverImage.large);
-                return img || null;
+            .then(function(r) {
+                if (r.status === 429 && intento < 4) {
+                    // Límite de peticiones alcanzado: esperamos y reintentamos
+                    var retryAfter = parseFloat(r.headers.get('Retry-After'));
+                    var espera = (isNaN(retryAfter) ? (intento + 1) * 2 : retryAfter) * 1000;
+                    return esperar(espera).then(function() {
+                        return buscarPortadaAniList(titulo, intento + 1);
+                    });
+                }
+                if (!r.ok) return null;
+                return r.json().then(function(data) {
+                    var media = data && data.data && data.data.Media;
+                    var img = media && media.coverImage && (media.coverImage.extraLarge || media.coverImage.large);
+                    return img || null;
+                });
             })
             .catch(function() { return null; });
         }
@@ -197,6 +236,7 @@
                     buscarPortadaAniList(job.titulo).then(function(url) {
                         activeRequests--;
                         imageCache[job.titulo] = url || 'ERROR';
+                        if (url) guardarCachePersistente();
                         actualizarImagenesEnPantalla(job.titulo, url);
                         procesarCola();
                     });
