@@ -173,7 +173,7 @@
         var activeRequests = 0;
         var MAX_CONCURRENT = 1;
         var DELAY_ENTRE_PETICIONES = 600;
-        var STORAGE_KEY = 'streampuro_portadas_v2';
+        var STORAGE_KEY = 'streampuro_portadas_v3';
 
         var PLACEHOLDER = function(titulo) {
             return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2220%22 y=%22200%22 font-size=%2216%22%3E' + encodeURIComponent(titulo.substring(0,14)) + '%3C/text%3E%3C/svg%3E';
