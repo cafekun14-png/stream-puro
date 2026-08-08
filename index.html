@@ -67,6 +67,7 @@
             padding:8px 16px;
             margin:0 4px;
         }
+        .btn-sm:hover { background:#52525b; }
         .results-grid {
             display:grid;
             grid-template-columns: repeat(2,1fr);
@@ -113,9 +114,15 @@
         @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:1} }
         .card h3 {
             font-size:0.8rem;
-            margin:10px 8px;
+            margin:10px 8px 4px;
             color:#e4e4e7;
             text-align:center;
+        }
+        .card .eps-badge {
+            font-size:0.6rem;
+            color:#a1a1aa;
+            text-align:center;
+            margin-bottom:8px;
         }
         .menu-episodes {
             margin-top:25px;
@@ -127,8 +134,13 @@
         .menu-episodes h2 {
             font-size:1.2rem;
             color:#00d2ff;
-            margin-bottom:15px;
+            margin-bottom:5px;
             text-shadow: 0 0 5px rgba(0,210,255,0.3);
+        }
+        .menu-episodes .info-text {
+            font-size:0.7rem;
+            color:#a1a1aa;
+            margin-bottom:15px;
         }
         .grid-buttons {
             display:grid;
@@ -167,23 +179,12 @@
             padding:20px;
             grid-column:1/-1;
         }
-        .btn-back {
-            background:#3f3f46;
-            color:white;
-            border:none;
-            border-radius:8px;
-            padding:6px 14px;
-            font-size:0.75rem;
-            cursor:pointer;
-            margin-bottom:10px;
-        }
-        .btn-back:hover { background:#52525b; }
     </style>
 </head>
 <body>
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Catálogo con Portadas Reales (AniList)</div>
+        <div class="subtitle">Catálogo con Datos Reales</div>
     </header>
 
     <div class="panel">
@@ -201,6 +202,7 @@
 
         <div id="episodeMenu" class="menu-episodes hidden">
             <h2 id="animeTitle">Capítulos</h2>
+            <div class="info-text" id="animeInfo"></div>
             <div id="episodeList" class="grid-buttons"></div>
         </div>
 
@@ -210,57 +212,56 @@
     </div>
 
     <script>
-    var CATALOGO = [
-        { titulo: "Naruto", caps: 220, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Naruto Shippuden", caps: 500, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "Dragon Ball Super", caps: 131, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "One Piece", caps: 1080, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "Demon Slayer", caps: 63, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Dragon Ball Z", caps: 291, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Dragon Ball", caps: 153, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Dragon Ball GT", caps: 64, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Boruto: Naruto Next Generations", caps: 293, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "Attack on Titan", caps: 89, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Death Note", caps: 37, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Hunter x Hunter (2011)", caps: 148, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Fullmetal Alchemist: Brotherhood", caps: 64, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Tokyo Ghoul", caps: 48, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Sword Art Online", caps: 96, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "One Punch Man", caps: 24, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Bleach", caps: 366, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Bleach: Thousand-Year Blood War", caps: 26, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "Fairy Tail", caps: 328, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Haikyuu!!", caps: 85, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Steins;Gate", caps: 24, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Re:Zero", caps: 50, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "KonoSuba", caps: 20, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Mob Psycho 100", caps: 37, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Vinland Saga", caps: 48, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
-        { titulo: "Dr. Stone", caps: 57, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Code Geass", caps: 50, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Cowboy Bebop", caps: 26, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Neon Genesis Evangelion", caps: 26, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Berserk (1997)", caps: 25, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Blue Lock", caps: 24, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Tokyo Revengers", caps: 50, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Kaguya-sama: Love is War", caps: 37, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Overlord", caps: 52, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "No Game No Life", caps: 12, audio: "Japonés + Subs", subtitulos: true },
-        { titulo: "Jujutsu Kaisen", caps: 47, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Chainsaw Man", caps: 12, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Spy x Family", caps: 37, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "My Hero Academia", caps: 138, audio: "Español Latino ✅", subtitulos: true },
-        { titulo: "Black Clover", caps: 170, audio: "Español Latino ✅", subtitulos: true }
-    ];
-
-        var EPISODIOS_POR_ANIME = 24;
+        var CATALOGO = [
+            { titulo: "Naruto", caps: 220, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Naruto Shippuden", caps: 500, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "Dragon Ball Super", caps: 131, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "One Piece", caps: 1080, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "Demon Slayer", caps: 63, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Dragon Ball Z", caps: 291, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Dragon Ball", caps: 153, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Dragon Ball GT", caps: 64, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Boruto: Naruto Next Generations", caps: 293, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "Attack on Titan", caps: 89, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Death Note", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Hunter x Hunter (2011)", caps: 148, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Fullmetal Alchemist: Brotherhood", caps: 64, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Tokyo Ghoul", caps: 48, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Sword Art Online", caps: 96, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "One Punch Man", caps: 24, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Bleach", caps: 366, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Bleach: Thousand-Year Blood War", caps: 26, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "Fairy Tail", caps: 328, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Haikyuu!!", caps: 85, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Steins;Gate", caps: 24, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Re:Zero", caps: 50, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "KonoSuba", caps: 20, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Mob Psycho 100", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Vinland Saga", caps: 48, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+            { titulo: "Dr. Stone", caps: 57, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Code Geass", caps: 50, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Cowboy Bebop", caps: 26, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Neon Genesis Evangelion", caps: 26, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Berserk (1997)", caps: 25, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Blue Lock", caps: 24, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Tokyo Revengers", caps: 50, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Kaguya-sama: Love is War", caps: 37, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Overlord", caps: 52, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "No Game No Life", caps: 12, audio: "Japonés + Subs", subtitulos: true },
+            { titulo: "Jujutsu Kaisen", caps: 47, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Chainsaw Man", caps: 12, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Spy x Family", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "My Hero Academia", caps: 138, audio: "Español Latino ✅", subtitulos: true },
+            { titulo: "Black Clover", caps: 170, audio: "Español Latino ✅", subtitulos: true }
+        ];
 
         var imageCache = {};
         var pendingQueue = [];
         var activeRequests = 0;
         var MAX_CONCURRENT = 1;
         var DELAY_ENTRE_PETICIONES = 600;
-        var STORAGE_KEY = 'streampuro_portadas_v3';
+        var STORAGE_KEY = 'streampuro_portadas_v5';
+        var animeSeleccionado = null;
 
         var PLACEHOLDER = function(titulo) {
             return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22300%22 height=%22400%22/%3E%3Ctext fill=%22%2300d2ff%22 x=%2220%22 y=%22200%22 font-size=%2216%22%3E' + encodeURIComponent(titulo.substring(0,14)) + '%3C/text%3E%3C/svg%3E';
@@ -382,6 +383,7 @@
         var episodeMenu = document.getElementById('episodeMenu');
         var episodeTitle = document.getElementById('animeTitle');
         var episodeList = document.getElementById('episodeList');
+        var animeInfo = document.getElementById('animeInfo');
         var backToCatBtn = document.getElementById('backToCatBtn');
 
         function mostrarCatalogo(filtro) {
@@ -391,9 +393,10 @@
             episodeMenu.classList.add('hidden');
             videoContainer.classList.add('hidden');
             backToCatBtn.classList.add('hidden');
+            animeSeleccionado = null;
 
-            var filtradas = CATALOGO.filter(function(titulo) {
-                return titulo.toLowerCase().indexOf(filtro.toLowerCase()) !== -1;
+            var filtradas = CATALOGO.filter(function(anime) {
+                return anime.titulo.toLowerCase().indexOf(filtro.toLowerCase()) !== -1;
             });
 
             if (filtradas.length === 0) {
@@ -401,12 +404,12 @@
                 return;
             }
 
-            filtradas.forEach(function(titulo) {
+            filtradas.forEach(function(anime) {
                 var card = document.createElement('div');
                 card.className = 'card';
-                card.setAttribute('data-title', titulo);
+                card.setAttribute('data-title', anime.titulo);
                 card.onclick = function() {
-                    mostrarEpisodios(titulo);
+                    mostrarEpisodios(anime);
                 };
 
                 var wrap = document.createElement('div');
@@ -416,40 +419,58 @@
                 wrap.appendChild(dot);
 
                 var title = document.createElement('h3');
-                title.textContent = titulo;
+                title.textContent = anime.titulo;
+
+                var badge = document.createElement('div');
+                badge.className = 'eps-badge';
+                badge.textContent = anime.caps + ' caps · ' + anime.audio;
 
                 card.appendChild(wrap);
                 card.appendChild(title);
+                card.appendChild(badge);
                 resultsDiv.appendChild(card);
 
-                pedirImagen(titulo);
+                pedirImagen(anime.titulo);
             });
         }
 
-        function mostrarEpisodios(titulo) {
+        function mostrarEpisodios(anime) {
+            animeSeleccionado = anime;
             resultsDiv.classList.add('hidden');
             episodeMenu.classList.remove('hidden');
             videoContainer.classList.add('hidden');
             backToCatBtn.classList.remove('hidden');
-            episodeTitle.textContent = titulo + ' - Capítulos';
+            episodeTitle.textContent = anime.titulo;
+            animeInfo.textContent = anime.caps + ' capítulos · ' + anime.audio;
             episodeList.innerHTML = '';
 
-            for (var i = 1; i <= EPISODIOS_POR_ANIME; i++) {
+            var total = anime.caps;
+            var mostrarMaximo = Math.min(total, 500);
+
+            for (var i = 1; i <= mostrarMaximo; i++) {
                 var btn = document.createElement('button');
                 btn.className = 'btn-ep';
-                btn.textContent = 'Ep ' + i;
+                btn.textContent = i;
                 (function(epNum) {
                     btn.onclick = function() {
-                        reproducirVideo(titulo, epNum);
+                        reproducirVideo(anime.titulo, epNum);
                     };
                 })(i);
                 episodeList.appendChild(btn);
             }
+
+            if (total > 500) {
+                var aviso = document.createElement('div');
+                aviso.className = 'info-msg';
+                aviso.textContent = 'Mostrando primeros 500 de ' + total + ' capítulos. Busca tu episodio en el buscador principal.';
+                episodeList.appendChild(aviso);
+            }
+
             episodeMenu.scrollIntoView({ behavior:'smooth', block:'nearest' });
         }
 
         function reproducirVideo(titulo, episodio) {
-            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#00d2ff;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}</style></head><body><div class="icon">🎬</div><h2>' + titulo + '</h2><p>Episodio ' + episodio + ' · Reproduciendo</p><p style="font-size:0.7rem;color:#52525b;">Video de muestra funcional</p></body></html>';
+            var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#00d2ff;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}</style></head><body><div class="icon">🎬</div><h2>' + titulo + '</h2><p>Episodio ' + episodio + ' · Reproduciendo</p></body></html>';
             var blob = new Blob([html], {type:'text/html'});
             var blobUrl = URL.createObjectURL(blob);
             if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
