@@ -210,18 +210,49 @@
     </div>
 
     <script>
-        var CATALOGO = [
-            "Naruto", "Naruto Shippuden", "Boruto: Naruto Next Generations",
-            "Dragon Ball", "Dragon Ball Z", "Dragon Ball Super", "Dragon Ball GT",
-            "One Piece", "Demon Slayer", "Attack on Titan", "Jujutsu Kaisen",
-            "Chainsaw Man", "Spy x Family", "My Hero Academia", "Death Note",
-            "Hunter x Hunter (2011)", "Fullmetal Alchemist: Brotherhood", "Tokyo Ghoul",
-            "Sword Art Online", "One Punch Man", "Black Clover", "Bleach",
-            "Bleach: Thousand-Year Blood War", "Fairy Tail", "Haikyuu!!", "Steins;Gate",
-            "Re:Zero", "KonoSuba", "Mob Psycho 100", "Vinland Saga", "Dr. Stone",
-            "Code Geass", "Cowboy Bebop", "Neon Genesis Evangelion", "Berserk (1997)",
-            "Blue Lock", "Tokyo Revengers", "Kaguya-sama: Love is War", "Overlord",
-            "No Game No Life"
+    var CATALOGO = [
+        { titulo: "Naruto", caps: 220, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Naruto Shippuden", caps: 500, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "Dragon Ball Super", caps: 131, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "One Piece", caps: 1080, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "Demon Slayer", caps: 63, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Dragon Ball Z", caps: 291, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Dragon Ball", caps: 153, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Dragon Ball GT", caps: 64, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Boruto: Naruto Next Generations", caps: 293, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "Attack on Titan", caps: 89, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Death Note", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Hunter x Hunter (2011)", caps: 148, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Fullmetal Alchemist: Brotherhood", caps: 64, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Tokyo Ghoul", caps: 48, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Sword Art Online", caps: 96, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "One Punch Man", caps: 24, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Bleach", caps: 366, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Bleach: Thousand-Year Blood War", caps: 26, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "Fairy Tail", caps: 328, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Haikyuu!!", caps: 85, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Steins;Gate", caps: 24, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Re:Zero", caps: 50, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "KonoSuba", caps: 20, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Mob Psycho 100", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Vinland Saga", caps: 48, audio: "Japonés + Español parcial ⚠️", subtitulos: true },
+        { titulo: "Dr. Stone", caps: 57, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Code Geass", caps: 50, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Cowboy Bebop", caps: 26, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Neon Genesis Evangelion", caps: 26, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Berserk (1997)", caps: 25, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Blue Lock", caps: 24, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Tokyo Revengers", caps: 50, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Kaguya-sama: Love is War", caps: 37, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Overlord", caps: 52, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "No Game No Life", caps: 12, audio: "Japonés + Subs", subtitulos: true },
+        { titulo: "Jujutsu Kaisen", caps: 47, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Chainsaw Man", caps: 12, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Spy x Family", caps: 37, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "My Hero Academia", caps: 138, audio: "Español Latino ✅", subtitulos: true },
+        { titulo: "Black Clover", caps: 170, audio: "Español Latino ✅", subtitulos: true }
+    ];
+    
         ];
 
         var EPISODIOS_POR_ANIME = 24;
