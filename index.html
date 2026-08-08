@@ -184,7 +184,7 @@
 <body>
     <header>
         <h1>STREAM PURO</h1>
-        <div class="subtitle">Catálogo con Datos Reales y Videos Reales</div>
+        <div class="subtitle">Catálogo con Videos de Muestra</div>
     </header>
 
     <div class="panel">
@@ -255,12 +255,20 @@
             { titulo: "Black Clover", caps: 170, audio: "Español Latino ✅", subtitulos: true }
         ];
 
+        var videosMuestra = [
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+        ];
+
         var imageCache = {};
         var pendingQueue = [];
         var activeRequests = 0;
         var MAX_CONCURRENT = 1;
         var DELAY_ENTRE_PETICIONES = 600;
-        var STORAGE_KEY = 'streampuro_portadas_v6';
+        var STORAGE_KEY = 'streampuro_portadas_v7';
         var animeSeleccionado = null;
 
         var PLACEHOLDER = function(titulo) {
@@ -469,80 +477,20 @@
             episodeMenu.scrollIntoView({ behavior:'smooth', block:'nearest' });
         }
 
-        function buscarEnlaceReal(titulo, episodio, callback) {
-            var q = encodeURIComponent(titulo);
-            var proxy = 'https://corsproxy.io/?';
-            
-            fetch(proxy + encodeURIComponent('https://api.consumet.org/anime/gogoanime/' + q))
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (!data.results || data.results.length === 0) { callback(null); return; }
-                    var animeId = data.results[0].id;
-                    fetch(proxy + encodeURIComponent('https://api.consumet.org/anime/gogoanime/info/' + animeId))
-                        .then(function(r) { return r.json(); })
-                        .then(function(info) {
-                            if (!info.episodes || info.episodes.length === 0) { callback(null); return; }
-                            var ep = info.episodes.find(function(e) { return e.number == episodio; });
-                            if (!ep) { callback(null); return; }
-                            fetch(proxy + encodeURIComponent('https://api.consumet.org/anime/gogoanime/watch/' + ep.id))
-                                .then(function(r) { return r.json(); })
-                                .then(function(watch) {
-                                    var fuente = watch.sources.find(function(s) { return !s.isM3U8; }) || watch.sources[0];
-                                    callback(fuente ? fuente.url : null);
-                                })
-                                .catch(function() { callback(null); });
-                        })
-                        .catch(function() { callback(null); });
-                })
-                .catch(function() { callback(null); });
-        }
-
         function reproducirVideo(titulo, episodio) {
-    var videosPrueba = [
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
-    ];
-    
-    var videoUrl = videosPrueba[(episodio - 1) % videosPrueba.length];
-    
-    var htmlVideo = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{width:100%;height:100%;max-height:100vh;background:#000;outline:none;}.info{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.7);padding:4px 10px;border-radius:6px;font-family:sans-serif;font-size:14px;z-index:10;pointer-events:none;}</style></head><body><div class="info">' + titulo + ' Ep ' + episodio + ' 🎬 Muestra</div><video controls autoplay playsinline src="' + videoUrl + '"></video></body></html>';
-    
-    var blobVideo = new Blob([htmlVideo], {type:'text/html'});
-    var blobUrlVideo = URL.createObjectURL(blobVideo);
-    
-    if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
-        URL.revokeObjectURL(playerIframe.src);
-    }
-    playerIframe.src = blobUrlVideo;
-    videoContainer.classList.remove('hidden');
-    videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
-        }
-            
-            buscarEnlaceReal(titulo, episodio, function(videoUrl) {
-                if (!videoUrl) {
-                    var htmlError = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;font-family:sans-serif;}h2{color:#f87171;text-align:center;margin-bottom:10px;}p{color:#a1a1aa;text-align:center;font-size:0.9rem;}.icon{font-size:4rem;margin-bottom:20px;}</style></head><body><div class="icon">😞</div><h2>' + titulo + '</h2><p>Episodio ' + episodio + ' no disponible</p><p style="font-size:0.7rem;">Intenta con otro episodio o más tarde</p></body></html>';
-                    var blobError = new Blob([htmlError], {type:'text/html'});
-                    var blobUrlError = URL.createObjectURL(blobError);
-                    if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
-                        URL.revokeObjectURL(playerIframe.src);
-                    }
-                    playerIframe.src = blobUrlError;
-                    return;
-                }
-                
-                var htmlVideo = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{width:100%;height:100%;max-height:100vh;background:#000;outline:none;}.info{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.7);padding:4px 10px;border-radius:6px;font-family:sans-serif;font-size:14px;z-index:10;pointer-events:none;}</style></head><body><div class="info">' + titulo + ' Ep ' + episodio + '</div><video controls autoplay playsinline src="' + videoUrl + '"></video></body></html>';
-                
-                var blobVideo = new Blob([htmlVideo], {type:'text/html'});
-                var blobUrlVideo = URL.createObjectURL(blobVideo);
-                
-                if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
-                    URL.revokeObjectURL(playerIframe.src);
-                }
-                playerIframe.src = blobUrlVideo;
-            });
+            var videoUrl = videosMuestra[(episodio - 1) % videosMuestra.length];
+
+            var htmlVideo = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;}video{width:100%;height:100%;max-height:100vh;background:#000;outline:none;}.info{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.7);padding:4px 10px;border-radius:6px;font-family:sans-serif;font-size:14px;z-index:10;pointer-events:none;}</style></head><body><div class="info">' + titulo + ' Ep ' + episodio + ' 🎬 Muestra</div><video controls autoplay playsinline src="' + videoUrl + '"></video></body></html>';
+
+            var blobVideo = new Blob([htmlVideo], {type:'text/html'});
+            var blobUrlVideo = URL.createObjectURL(blobVideo);
+
+            if (playerIframe.src && playerIframe.src.indexOf('blob:') === 0) {
+                URL.revokeObjectURL(playerIframe.src);
+            }
+            playerIframe.src = blobUrlVideo;
+            videoContainer.classList.remove('hidden');
+            videoContainer.scrollIntoView({ behavior:'smooth', block:'center' });
         }
 
         document.getElementById('retryBtn').addEventListener('click', reintentarFallidas);
